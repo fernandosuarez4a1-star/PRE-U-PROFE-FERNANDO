@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0F2942" />
+  <meta name="description" content="Plataforma preuniversitaria y simulador oficial de admisión - Profe Fernando PRE-U" />
+  
+  <!-- PWA & Apple iOS Support -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Fernando PRE-U" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230F2942'/%3E%3Crect x='28' y='28' width='456' height='456' rx='72' fill='none' stroke='%23B48327' stroke-width='12'/%3E%3Cpath d='M256 110L96 185l160 75 160-75-160-75z' fill='%23FFFFFF'/%3E%3Cpath d='M156 235v75c0 35 45 62 100 62s100-27 100-62v-75l-100 47-100-47z' fill='%23B48327'/%3E%3Ctext x='256' y='442' font-family='Arial, sans-serif' font-weight='bold' font-size='54' fill='%23FFFFFF' text-anchor='middle'%3EPRE-U%3C/text%3E%3C/svg%3E" />
+
+  <title>Profe Fernando PRE-U | Simulador de Admisión Universitaria</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ================= BARRA SUPERIOR INSTITUCIONAL ================= -->
+  <header id="main-header" class="institutional-header no-print">
+    <div class="header-brand">
+      <svg class="brand-logo" viewBox="0 0 64 64" width="38" height="38" aria-hidden="true">
+        <rect width="64" height="64" rx="12" fill="#1E4E79" stroke="#B48327" stroke-width="3"/>
+        <path d="M32 14L10 24l22 10 22-10-22-10z" fill="#FFFFFF"/>
+        <path d="M18 30v10c0 5 6 9 14 9s14-4 14-9V30l-14 6-14-6z" fill="#B48327"/>
+      </svg>
+      <div>
+        <h1 class="brand-title">Profe Fernando PRE-U</h1>
+        <span class="brand-subtitle">Sistema Oficial de Simulación y Certificación Preuniversitaria</span>
+      </div>
+    </div>
+    <div id="header-user-controls" class="header-controls hidden">
+      <span id="header-user-badge" class="user-badge"></span>
+      <button id="btn-logout" class="btn btn-outline-light btn-sm">Cambiar Usuario</button>
+    </div>
+  </header>
+
+  <!-- ================= VISTA 1: PORTAL DE ACCESO (ROLES) ================= -->
+  <main id="view-login" class="container view-section">
+    <div class="login-hero">
+      <h2>Plataforma de Entrenamiento para Examen de Ingreso a la Universidad</h2>
+      <p>Evalúa tus conocimientos en Matemáticas, Lógica y Razonamiento Abstracto bajo condiciones reales de admisión.</p>
+    </div>
+
+    <div class="roles-grid">
+      <!-- Tarjeta Acceso Estudiante -->
+      <section class="card role-card">
+        <div class="card-header-solid bg-navy">
+          <h3>Entorno Estudiante</h3>
+          <span class="badge badge-gold">Intento Único Certificado</span>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">Ingresa tu <strong>Nombre y Apellido</strong> exactos. Aparecerán impresos en tus certificados oficiales al completar cada tema.</p>
+          <form id="form-student-login" novalidate>
+            <div class="form-group">
+              <label for="student-fullname">Nombre y Apellido del Postulante *</label>
+              <input type="text" id="student-fullname" class="form-control" placeholder="Ej. Camila Andrea Morales" required autocomplete="name" />
+              <small id="student-login-error" class="error-text hidden">Por favor ingresa al menos un nombre y un apellido válidos.</small>
+            </div>
+            <div class="alert alert-info">
+              <strong>Regla de Admisión:</strong> Cada nivel (Básico, Medio y Difícil) y el Desafío Final tienen <strong>1 único intento</strong> registrado por estudiante.
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Ingresar al Panel Estudiantil</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Tarjeta Acceso Profesor -->
+      <section class="card role-card">
+        <div class="card-header-solid bg-steel">
+          <h3>Entorno Docente / Administración</h3>
+          <span class="badge badge-light">Acceso Protegido</span>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">Gestiona el banco de preguntas, exporta o importa paquetes de ejercicios y supervisa el rendimiento de tus estudiantes.</p>
+          <form id="form-teacher-login" novalidate>
+            <div class="form-group">
+              <label for="teacher-pin">PIN de Acceso Docente *</label>
+              <input type="password" id="teacher-pin" class="form-control" placeholder="Ingresa el PIN (Por defecto: 1234)" maxlength="8" required />
+              <small id="teacher-login-error" class="error-text hidden">PIN incorrecto. Verifica tus credenciales docentes.</small>
+            </div>
+            <button type="submit" class="btn btn-secondary btn-block">Acceder como Docente</button>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ================= VISTA 2: PANEL DEL ESTUDIANTE ================= -->
+  <section id="view-student-dashboard" class="container view-section hidden no-print">
+    <!-- Resumen Superior -->
+    <div class="dashboard-stats-bar">
+      <div class="stat-box">
+        <span class="stat-label">Postulante</span>
+        <strong id="dash-student-name" class="stat-value text-navy">—</strong>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Niveles Completados</span>
+        <strong id="dash-levels-completed" class="stat-value">0 / 33</strong>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Certificados Obtenidos</span>
+        <strong id="dash-certs-count" class="stat-value text-gold">0 / 12</strong>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Promedio Global</span>
+        <strong id="dash-avg-score" class="stat-value text-emerald">0 pts</strong>
+      </div>
+    </div>
+
+    <!-- Pestañas de Navegación Estudiante -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" data-tab="tab-topics">Temario Oficial (11 Temas + Desafío Final)</button>
+      <button class="tab-btn" data-tab="tab-certificates">Mis Certificaciones (<span id="tab-cert-badge">0</span>)</button>
+    </div>
+
+    <!-- TAB 1: TEMARIO Y DESAFÍO FINAL -->
+    <div id="tab-topics" class="tab-content active">
+      <div class="block-section">
+        <h3 class="block-title">Bloque 1: Matemáticas y Lógica (7 Temas)</h3>
+        <div id="grid-block-1" class="topics-grid"></div>
+      </div>
+
+      <div class="block-section">
+        <h3 class="block-title">Bloque 2: Razonamiento Abstracto (4 Temas con Gráficos SVG)</h3>
+        <div id="grid-block-2" class="topics-grid"></div>
+      </div>
+
+      <!-- DESAFÍO FINAL INTEGRADOR -->
+      <div class="block-section">
+        <div id="final-challenge-container" class="final-challenge-card"></div>
+      </div>
+    </div>
+
+    <!-- TAB 2: GALERÍA DE CERTIFICADOS -->
+    <div id="tab-certificates" class="tab-content hidden">
+      <div class="section-intro">
+        <h3>Certificaciones Oficiales Obtenidas</h3>
+        <p>Completa los 3 niveles (Básico, Medio y Difícil) de cada tema para desbloquear automáticamente su certificado oficial imprimible.</p>
+      </div>
+      <div id="certificates-gallery" class="certificates-grid"></div>
+    </div>
+  </section>
+
+  <!-- ================= VISTA 3: SIMULADOR DE EXAMEN ================= -->
+  <section id="view-exam-simulator" class="view-section hidden no-print">
+    <div class="exam-topbar">
+      <div class="exam-meta">
+        <span id="exam-student-tag" class="exam-tag">Estudiante</span>
+        <span id="exam-topic-title" class="exam-title">Tema</span>
+        <span id="exam-level-badge" class="badge badge-gold">Nivel</span>
+      </div>
+      <div class="exam-status">
+        <span id="exam-progress-text" class="progress-indicator">Pregunta 1 de 5</span>
+        <div id="exam-timer-box" class="timer-box">
+          <span class="timer-icon">⏱</span>
+          <span id="exam-timer-display">00:00</span>
+        </div>
+        <button id="btn-finish-exam-early" class="btn btn-danger btn-sm">Finalizar y Calificar</button>
+      </div>
+    </div>
+
+    <div class="exam-workspace container">
+      <div class="question-panel card">
+        <div class="question-header">
+          <span id="q-number-label" class="q-badge">Pregunta #1</span>
+          <label class="flag-checkbox">
+            <input type="checkbox" id="chk-flag-question" />
+            <span>Marcar para revisar</span>
+          </label>
+        </div>
+
+        <div id="q-statement" class="question-statement"></div>
+        <div id="q-svg-container" class="question-svg-box hidden"></div>
+
+        <div id="q-options-list" class="options-container"></div>
+
+        <div class="question-footer-nav">
+          <button id="btn-prev-q" class="btn btn-outline">← Anterior</button>
+          <button id="btn-next-q" class="btn btn-primary">Siguiente →</button>
+        </div>
+      </div>
+
+      <aside class="navigator-panel card">
+        <h4>Navegador de Preguntas</h4>
+        <div class="nav-legend">
+          <span><i class="dot dot-unanswered"></i> Sin responder</span>
+          <span><i class="dot dot-answered"></i> Respondida</span>
+          <span><i class="dot dot-flagged"></i> Revisar</span>
+        </div>
+        <div id="question-grid-nav" class="question-grid"></div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ================= VISTA 4: RESULTADOS Y REVISIÓN PASO A PASO ================= -->
+  <section id="view-exam-results" class="container view-section hidden no-print">
+    <div class="card results-summary-card">
+      <div class="card-header-solid bg-navy">
+        <h2 id="res-title">Resultados de Evaluación</h2>
+        <span id="res-subtitle" class="badge badge-gold">Nivel Completado</span>
+      </div>
+      <div class="card-body">
+        <div class="score-hero">
+          <div class="score-circle">
+            <span id="res-score-1000" class="score-big">850</span>
+            <span class="score-max">/ 1000 pts</span>
+          </div>
+          <div class="score-details-grid">
+            <div class="detail-item">
+              <span>Postulante:</span>
+              <strong id="res-student-name">—</strong>
+            </div>
+            <div class="detail-item">
+              <span>Aciertos:</span>
+              <strong id="res-correct-count" class="text-emerald">0</strong>
+            </div>
+            <div class="detail-item">
+              <span>Errores / En blanco:</span>
+              <strong id="res-wrong-count" class="text-crimson">0</strong>
+            </div>
+            <div class="detail-item">
+              <span>Tiempo empleado:</span>
+              <strong id="res-time-used">00:00</strong>
+            </div>
+          </div>
+        </div>
+
+        <div id="res-breakdown-box" class="breakdown-box hidden">
+          <h4>Desglose de Rendimiento por Tema (11 Áreas Evaluadas)</h4>
+          <div id="res-breakdown-list" class="breakdown-grid"></div>
+        </div>
+
+        <div id="res-cert-unlocked-banner" class="alert alert-success hidden">
+          <div>
+            <strong>¡Felicitaciones! Has desbloqueado un Certificado Oficial.</strong>
+            <p>Has completado satisfactoriamente todos los requisitos de esta área.</p>
+          </div>
+          <button id="btn-res-view-cert" class="btn btn-gold">Ver e Imprimir Certificado</button>
+        </div>
+
+        <div class="results-actions">
+          <button id="btn-back-dashboard" class="btn btn-primary">Volver al Panel Principal</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="review-section">
+      <h3>Revisión Paso a Paso y Solucionario</h3>
+      <div id="res-review-list" class="review-list"></div>
+    </div>
+  </section>
+
+  <!-- ================= VISTA 5: CERTIFICADO OFICIAL IMPRIMIBLE ================= -->
+  <section id="view-certificate-print" class="view-section hidden">
+    <div class="cert-toolbar container no-print">
+      <button id="btn-close-cert" class="btn btn-outline">← Volver al Panel</button>
+      <button id="btn-print-cert" class="btn btn-gold">🖨️ Descargar / Imprimir Certificado (PDF)</button>
+    </div>
+
+    <div class="certificate-sheet-wrapper">
+      <div class="certificate-border-outer">
+        <div class="certificate-border-inner">
+          <div class="cert-header">
+            <svg viewBox="0 0 64 64" width="56" height="56">
+              <rect width="64" height="64" rx="12" fill="#0F2942" stroke="#B48327" stroke-width="3"/>
+              <path d="M32 14L10 24l22 10 22-10-22-10z" fill="#FFFFFF"/>
+              <path d="M18 30v10c0 5 6 9 14 9s14-4 14-9V30l-14 6-14-6z" fill="#B48327"/>
+            </svg>
+            <div class="cert-institution">
+              <span class="cert-inst-top">ACADEMIA DE PREPARACIÓN UNIVERSITARIA</span>
+              <h1>PROFE VIRON PREU</h1>
+              <span class="cert-inst-sub">Programa Oficial de Nivelación y Admisión Superior</span>
+            </div>
+          </div>
+
+          <div class="cert-divider"></div>
+
+          <p class="cert-label">OTORGA EL PRESENTE</p>
+          <h2 id="cert-doc-title" class="cert-main-title">CERTIFICADO DE CULMINACIÓN ACADÉMICA</h2>
+
+          <p class="cert-confer-text">A favor de:</p>
+          <div id="cert-student-name" class="cert-student-display">NOMBRE DEL ESTUDIANTE</div>
+
+          <p id="cert-body-text" class="cert-description">
+            Por haber culminado satisfactoriamente la práctica integral (Niveles Básico, Medio y Difícil) correspondiente al módulo de estudio:
+          </p>
+
+          <div id="cert-topic-name" class="cert-topic-box">NOMBRE DEL TEMA</div>
+
+          <div class="cert-metrics">
+            <span>Calificación Obtenida: <strong id="cert-score-val">950 / 1000 puntos</strong></span>
+            <span>Fecha de Emisión: <strong id="cert-date-val">22 de noviembre de 2026</strong></span>
+          </div>
+
+          <div class="cert-footer">
+            <div class="cert-signature">
+              <div class="sig-line"></div>
+              <strong>Profe Fernando</strong>
+              <span>Director Académico — Profe Fernando PRE-U</span>
+            </div>
+
+            <div class="cert-seal">
+              <svg viewBox="0 0 120 120" width="95" height="95">
+                <circle cx="60" cy="60" r="54" fill="none" stroke="#B48327" stroke-width="4" stroke-dasharray="6,3"/>
+                <circle cx="60" cy="60" r="44" fill="#0F2942"/>
+                <text x="60" y="52" fill="#B48327" font-size="11" font-weight="bold" text-anchor="middle">APROBADO</text>
+                <text x="60" y="68" fill="#FFFFFF" font-size="13" font-weight="bold" text-anchor="middle">PRE-U</text>
+                <text x="60" y="82" fill="#B48327" font-size="9" text-anchor="middle">OFICIAL</text>
+              </svg>
+            </div>
+
+            <div class="cert-validation">
+              <span>Código de Verificación Único:</span>
+              <strong id="cert-code-val" class="cert-code">PREU-2026-XXXX</strong>
+              <small>Documento verificable en plataforma local</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= VISTA 6: ENTORNO PROFESOR ================= -->
+  <section id="view-teacher-dashboard" class="container view-section hidden no-print">
+    <div class="teacher-header-bar">
+      <div>
+        <h2>Panel Docente y Gestión del Banco de Reactivos</h2>
+        <p class="text-muted">Administra preguntas, exporta/importa JSON y supervisa el progreso de los estudiantes.</p>
+      </div>
+      <div class="teacher-io-actions">
+        <button id="btn-export-bank" class="btn btn-outline">⬇ Exportar Banco (.json)</button>
+        <label class="btn btn-secondary file-upload-btn">
+          ⬆ Importar Banco (.json)
+          <input type="file" id="input-import-bank" accept=".json" hidden />
+        </label>
+      </div>
+    </div>
+
+    <div class="tabs-bar">
+      <button class="tab-btn active" data-teacher-tab="t-tab-students">Seguimiento de Estudiantes</button>
+      <button class="tab-btn" data-teacher-tab="t-tab-questions">Gestor de Preguntas (<span id="total-q-count">0</span>)</button>
+      <button class="tab-btn" data-teacher-tab="t-tab-settings">Configuración PIN</button>
+    </div>
+
+    <!-- TAB DOCENTE 1: SEGUIMIENTO DE ESTUDIANTES -->
+    <div id="t-tab-students" class="teacher-tab-content active">
+      <div class="card">
+        <div class="card-header-solid bg-navy">
+          <h3>Registro de Postulantes y Calificaciones</h3>
+        </div>
+        <div class="card-body table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nombre y Apellido</th>
+                <th>Niveles Completados</th>
+                <th>Promedio Temas</th>
+                <th>Certificados</th>
+                <th>Desafío Final</th>
+                <th>Acciones Administrativas</th>
+              </tr>
+            </thead>
+            <tbody id="teacher-students-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB DOCENTE 2: GESTOR DE PREGUNTAS -->
+    <div id="t-tab-questions" class="teacher-tab-content hidden">
+      <div class="teacher-q-layout">
+        <div class="card">
+          <div class="card-header-solid bg-steel">
+            <h3 id="q-form-title">Agregar Nueva Pregunta</h3>
+          </div>
+          <div class="card-body">
+            <form id="form-manage-question">
+              <input type="hidden" id="edit-q-id" value="" />
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="q-topic-select">Tema *</label>
+                  <select id="q-topic-select" class="form-control" required></select>
+                </div>
+                <div class="form-group">
+                  <label for="q-level-select">Nivel *</label>
+                  <select id="q-level-select" class="form-control" required>
+                    <option value="basico">Básico</option>
+                    <option value="medio">Medio</option>
+                    <option value="dificil">Difícil</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="q-text-input">Enunciado de la Pregunta *</label>
+                <textarea id="q-text-input" class="form-control" rows="3" required placeholder="Escribe el planteamiento del ejercicio..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="q-svg-input">Código SVG Opcional (Gráficos, Venn, Geometría, Matrices)</label>
+                <textarea id="q-svg-input" class="form-control code-input" rows="3" placeholder='<svg viewBox="0 0 200 100">...</svg>'></textarea>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="q-opt-0">Opción A *</label>
+                  <input type="text" id="q-opt-0" class="form-control" required />
+                </div>
+                <div class="form-group">
+                  <label for="q-opt-1">Opción B *</label>
+                  <input type="text" id="q-opt-1" class="form-control" required />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="q-opt-2">Opción C *</label>
+                  <input type="text" id="q-opt-2" class="form-control" required />
+                </div>
+                <div class="form-group">
+                  <label for="q-opt-3">Opción D *</label>
+                  <input type="text" id="q-opt-3" class="form-control" required />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="q-correct-select">Respuesta Correcta *</label>
+                <select id="q-correct-select" class="form-control" required>
+                  <option value="0">Opción A</option>
+                  <option value="1">Opción B</option>
+                  <option value="2">Opción C</option>
+                  <option value="3">Opción D</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="q-explanation-input">Explicación / Resolución Paso a Paso *</label>
+                <textarea id="q-explanation-input" class="form-control" rows="2" required placeholder="Explica el procedimiento para llegar a la respuesta correcta..."></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Guardar Pregunta</button>
+                <button type="button" id="btn-cancel-edit-q" class="btn btn-outline hidden">Cancelar Edición</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header-solid bg-navy">
+            <h3>Explorar Banco de Preguntas</h3>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <select id="filter-topic-select" class="form-control"></select>
+              <select id="filter-level-select" class="form-control">
+                <option value="all">Todos los niveles</option>
+                <option value="basico">Básico</option>
+                <option value="medio">Medio</option>
+                <option value="dificil">Difícil</option>
+              </select>
+            </div>
+            <div id="teacher-questions-list" class="teacher-q-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB DOCENTE 3: CONFIGURACIÓN -->
+    <div id="t-tab-settings" class="teacher-tab-content hidden">
+      <div class="card max-w-500">
+        <div class="card-header-solid bg-navy">
+          <h3>Seguridad Docente</h3>
+        </div>
+        <div class="card-body">
+          <form id="form-change-pin">
+            <div class="form-group">
+              <label for="new-teacher-pin">Nuevo PIN de Acceso (4 a 8 dígitos)</label>
+              <input type="text" id="new-teacher-pin" class="form-control" minlength="4" maxlength="8" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Actualizar PIN</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MODAL DETALLE ESTUDIANTE / REINICIO DE INTENTOS ================= -->
+  <div id="modal-student-detail" class="modal-overlay hidden no-print">
+    <div class="modal-box card">
+      <div class="card-header-solid bg-navy">
+        <h3 id="modal-st-name">Detalle del Estudiante</h3>
+        <button id="btn-close-modal" class="btn-close-white">✕</button>
+      </div>
+      <div class="card-body">
+        <p class="text-muted">Como docente, puedes consultar las notas por nivel o habilitar un nuevo intento extraordinario en caso de falla técnica.</p>
+        <div id="modal-st-attempts-list" class="modal-attempts-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts de la aplicación -->
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW registro:', err));
+      });
+    }
+  </script>
+</body>
+</html>

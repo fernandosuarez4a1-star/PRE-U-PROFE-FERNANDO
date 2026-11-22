@@ -1,0 +1,25 @@
+{
+  "name": "Profe Fernando PRE-U — Simulador de Admisión",
+  "short_name": "Fernando PRE-U",
+  "description": "Plataforma preuniversitaria oficial con simulador de examen de admisión, práctica por niveles y certificación académica.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F4F6F9",
+  "theme_color": "#0F2942",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%230F2942'/%3E%3Crect x='10' y='10' width='172' height='172' rx='28' fill='none' stroke='%23B48327' stroke-width='5'/%3E%3Cpath d='M96 40L34 69l62 29 62-29-62-29z' fill='%23FFFFFF'/%3E%3Cpath d='M58 88v28c0 13 17 24 38 24s38-11 38-24V88l-38 18-38-18z' fill='%23B48327'/%3E%3Ctext x='96' y='168' font-family='Arial, sans-serif' font-weight='bold' font-size='21' fill='%23FFFFFF' text-anchor='middle'%3EPRE-U%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230F2942'/%3E%3Crect x='28' y='28' width='456' height='456' rx='72' fill='none' stroke='%23B48327' stroke-width='12'/%3E%3Cpath d='M256 110L96 185l160 75 160-75-160-75z' fill='%23FFFFFF'/%3E%3Cpath d='M156 235v75c0 35 45 62 100 62s100-27 100-62v-75l-100 47-100-47z' fill='%23B48327'/%3E%3Ctext x='256' y='442' font-family='Arial, sans-serif' font-weight='bold' font-size='54' fill='%23FFFFFF' text-anchor='middle'%3EPRE-U%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
